@@ -1,3 +1,14 @@
+<?php
+require_once "./config.php";
+
+
+
+
+
+   
+
+
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -14,39 +25,36 @@
     <div class="container mt-5">
   <h1 class="mb-4">Our Products</h1>
   <div class="row">
+<?php
+$show = "SELECT * FROM products";
+
+
+if($result = mysqli_query($conn,$show)){
+  if(mysqli_num_rows($result)>0){
+    $i= 1; while($row = mysqli_fetch_array($result)){ ?>
+
     <div class="col-md-4">
       <div class="card product-card">
-        <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product Image">
+        <img src="uploads/<?php echo $row['product_image'];?>" class="card-img-top" alt="Product Image">
         <div class="card-body">
-          <h5 class="card-title">Product 1</h5>
-          <p class="card-text">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p class="card-text"><strong>Price:</strong> $XX.XX</p>
+          <h5 class="card-title"><?php echo $row['product_name'];?></h5>
+          <p class="card-text"><?php echo $row['description'];?></p>
+          <p class="card-text"><strong>Price:</strong>Rs. <?php echo $row['price'];?></p>
           <a href="#" class="btn btn-primary">View Details</a>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card product-card">
-        <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product Image">
-        <div class="card-body">
-          <h5 class="card-title">Product 2</h5>
-          <p class="card-text">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p class="card-text"><strong>Price:</strong> $XX.XX</p>
-          <a href="#" class="btn btn-primary">View Details</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card product-card">
-        <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product Image">
-        <div class="card-body">
-          <h5 class="card-title">Product 3</h5>
-          <p class="card-text">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p class="card-text"><strong>Price:</strong> $XX.XX</p>
-          <a href="#" class="btn btn-primary">View Details</a>
-        </div>
-      </div>
-    </div>
+
+    <?php  }
+    mysqli_free_result($result);
+  }else{
+    echo "no products";
+  }
+}else{
+  echo "Failed to fetch";
+}
+?>
+
     <!-- Add more product cards as needed -->
   </div>
 </div>

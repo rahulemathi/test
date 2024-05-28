@@ -1,3 +1,80 @@
+<?php 
+require_once "config.php";
+
+if(isset($_POST['submit'])){
+ $pname =  $_POST['productName'];
+ $description = $_POST['productDescription'];
+ $price = $_POST['productPrice'];
+
+ $target_dir = "uploads/";
+ $target_file = $target_dir . basename($_FILES["productImage"]["name"]);
+ $uploadOk = 1;
+ $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+ 
+ // Check if image file is a actual image or fake image
+ if(isset($_POST["submit"])) {
+   $check = getimagesize($_FILES["productImage"]["tmp_name"]);
+   if($check !== false) {
+     echo "File is an image - " . $check["mime"] . ".";
+     $uploadOk = 1;
+   } else {
+     echo "File is not an image.";
+     $uploadOk = 0;
+   }
+ }
+ 
+ // Check if file already exists
+ if (file_exists($target_file)) {
+   echo "Sorry, file already exists.";
+   $uploadOk = 0;
+ }
+ 
+ // Check file size
+ if ($_FILES["productImage"]["size"] > 500000) {
+   echo "Sorry, your file is too large.";
+   $uploadOk = 0;
+ }
+ 
+ // Allow certain file formats
+ if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+ && $imageFileType != "gif" ) {
+   echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+   $uploadOk = 0;
+ }
+ 
+ // Check if $uploadOk is set to 0 by an error
+ if ($uploadOk == 0) {
+   echo "Sorry, your file was not uploaded.";
+ // if everything is ok, try to upload file
+ } else {
+   if (move_uploaded_file($_FILES["productImage"]["tmp_name"], $target_file)) {
+     echo "The file ". htmlspecialchars( basename( $_FILES["productImage"]["name"])). " has been uploaded.";
+   } else {
+     echo "Sorry, there was an error uploading your file.";
+   }
+ }
+
+$pimage = htmlspecialchars( basename( $_FILES["productImage"]["name"]));
+
+
+
+
+ $insert = "INSERT INTO products(product_name,description,price,discount_price,product_image) VALUES('$pname','$description',$price,'0','$pimage')";
+
+ if(mysqli_query($conn,$insert)){
+  echo "<script>alert('product added successfully') </script>";
+ }else{
+  echo "<script>alert('product not added') </script>";
+ }
+
+}
+
+
+
+
+?>
+
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -31,7 +108,7 @@
         <input type="file" class="form-control" id="productImage" name="productImage" accept="image/*" required>
       </div>
       <div class="mb-3 d-grid gap-2 d-md-flex justify-content-center">
-        <button type="submit" class="btn btn-primary me-md-2">Add Product</button>
+        <button type="submit" class="btn btn-primary me-md-2" name="submit" value="submit">Add Product</button>
         <button type="submit" class="btn btn-success">Save & Add Another</button>
       </div>
     </form>
